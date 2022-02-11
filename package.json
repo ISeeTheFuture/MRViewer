@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "name": "MRViewer",
   "version": "0.0.1",
+=======
+  "name": "gitlab-merge-requests-notifier",
+  "version": "0.2.0",
+>>>>>>> d633017 (package.json 빌드 오류 수정)
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
