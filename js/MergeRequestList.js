@@ -17,7 +17,7 @@ class MergeRequestList {
             } = projectInfo;
 
             const approvedBy = approved_by.map(({user}) => user.name).join(' and ');
-            const suggested = suggested_approvers.map(({name}) => name).join(' , ');
+            const suggested = suggested_approvers.map(({name}) => name).join(', ');
 
             const listItem = document.createElement('li');
             listItem.innerHTML = `
