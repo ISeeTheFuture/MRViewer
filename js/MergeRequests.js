@@ -41,77 +41,58 @@ class MergeRequests {
     }
 
     getData() {
-        // const approvalPromises = [];
         const mrPromise = [];
+        var mrPromiseLen = -1;
+        var cnt = 0;
         // this.axiosConfig('https://gitlab.synap.co.kr/api/v4/merge_requests?scope=all&state=opened&per_page=200')
-        this.axiosConfig(`https://gitlab.synap.co.kr/api/v4/groups/${GROUP_ID}/projects`)
-            .then(({data}) => {
-                const storedToken = new StoredToken();
-                storedToken.getToken(this.token);
-                
-                const group_projects = data;
-                group_projects.forEach(({_links}) => {
-                    this.axiosConfig(`${_links.merge_requests}`)
-                        .then(({data}) => {
-                            data.forEach((mr) => {
-                                if (mr.state == "merged" ) {
-                                    mrPromise.push(mr);
-                                    const upvotes = this.get_thumb_list(mr.web_url, this.token);
-                                    if (upvotes != null) {
-                                        console.log(upvotes)
-                                    }
-                                    // console.log(this.get_thumb_reviewer(upvotes))
-                                }
-                            })
-                        });
-                });
-
-                // console.log(projectPromise);
-
-                // projectPromise.forEach((data) => {
-                //     console.log(data);
-                //     get_thumb_list(data.web_url);
-                // })
-
-                // const data_No_Approvals = data;
-                // data_No_Approvals.forEach(({project_id, iid}) => {
-                //     const promise = this.axiosConfig(`https://gitlab.synap.co.kr/api/v4/projects/${project_id}/merge_requests/${iid}`);
-                //     approvalPromises.push(promise);
-                // });
-
-                // axios.all(approvalPromises)
-                //     .then(response => {
-                //         return response.map(({data}, index) => {
-                //             data_No_Approvals[index]['approvalsInfo'] = data;
-                //             return data_No_Approvals[index];
-                //         });
-                //     })
-                //     .then(data_With_Approvals => {
-                //         data_With_Approvals.forEach(({project_id}) => {
-                //             const promise = this.axiosConfig(`https://gitlab.synap.co.kr/api/v4/projects/${project_id}/`);
-                //             projectPromise.push(promise);
-                //         });
-
-                //         axios.all(projectPromise)
-                //             .then(response => {
-                //                 return response.map(({data}, index) => {
-                //                     data_With_Approvals[index]['projectInfo'] = data;
-                //                     return data_With_Approvals[index];
-                //                 });
-                //             })
-                //             .then(data_With_Project_Approvals => {
-                //                 mergeRequestList.createList(data_With_Project_Approvals);
-                //                 LoadingBar.hide();
-                //             });
-                //     })
-            })
-            .catch(e => {
-                console.log(e);
-                LoadingBar.hide();
-                alert('error!')
-                document.getElementById('login-form').style.display = 'block';
+        this.axiosConfig(`https://gitlab.synap.co.kr/api/v4/groups/${GROUP_ID}/projects`) // https://elvanov.com/2597
+        .then(({data}) => {
+            const storedToken = new StoredToken();
+            storedToken.getToken(this.token);
+            
+            const group_projects = data;
+            group_projects.forEach(({_links}) => {
+                this.axiosConfig(`${_links.merge_requests}`)
+                .then(({data}) => {
+                    data.forEach((mr) => {
+                        if (mr.state == "merged" ) {
+                            mrPromise.push(mr);
+                            // const upvotes = this.get_thumb_list(mr.web_url, this.token);
+                            // if (upvotes != null) {
+                            //     console.log(upvotes)
+                            // }
+                            // console.log(this.get_thumb_reviewer(upvotes))
+                            cnt++;
+                        }
+                    })
+                    mergeRequestList.createList(mrPromise);
+                    LoadingBar.hide();
+                })
             });
+
+            // projectPromise.forEach((data) => {
+            //     console.log(data);
+            //     get_thumb_list(data.web_url);
+            // })
+        })
+        .catch(e => {
+            console.log(e);
+            LoadingBar.hide();
+            alert('error!')
+            document.getElementById('login-form').style.display = 'block';
+        });
     }
+
+    isEnd(before, now) {
+        console.log(before);
+        console.log(now);
+        setTimeout(500);
+        if(before != now) {
+            return false
+        }
+        return true
+    }
+
 
     get_thumb_list(url, token) {
         this.request_thumb_list(url, token).then((response) => {

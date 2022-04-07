@@ -12,8 +12,8 @@ app.on('ready', (launchInfo) => {
     console.log(`isReady : ${app.isReady()}`);
 
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1024,
+        height: 800,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation : false, // https://bug41.tistory.com/83
