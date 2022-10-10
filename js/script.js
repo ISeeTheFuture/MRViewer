@@ -1,13 +1,11 @@
-const Store = require('electron-store');
+// const Store = require('electron-store');
 const MergeRequests = require('./MergeRequests')
 
-
-const store = new Store();
-
+// const store = new Store();
 
 class Login {
     constructor() {
-        const storedToken = store.get('token')
+        const storedToken = localStorage.getItem('token')
         storedToken ? new MergeRequests(storedToken) : this.getValue();
     }
 

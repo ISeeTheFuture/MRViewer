@@ -44,6 +44,7 @@ class MergeRequests {
         const mrPromise = [];
         var mrPromiseLen = -1;
         var cnt = 0;
+
         // this.axiosConfig('https://gitlab.synap.co.kr/api/v4/merge_requests?scope=all&state=opened&per_page=200')
         this.axiosConfig(`https://gitlab.synap.co.kr/api/v4/groups/${GROUP_ID}/projects`) // https://elvanov.com/2597
         .then(({data}) => {
@@ -62,14 +63,18 @@ class MergeRequests {
                             //     console.log(upvotes)
                             // }
                             // console.log(this.get_thumb_reviewer(upvotes))
-                            cnt++;
+                            cnt++; // 필요없으면 지울 것
                         }
                     })
                     mergeRequestList.createList(mrPromise);
                     LoadingBar.hide();
+                    localStorage.setItem('MRList', JSON.stringify(mrPromise)); // localStorage에 배열을 그냥 넣을 수는 없고, json 형식으로 변환해야함
+                    localStorage.setItem('MRListTime', JSON.stringify(new Date())); // https://hianna.tistory.com/698
+                    // var output = localStorage.getItem('MRList');
+                    // var arrOutput = JSON.parse(output);
+                    // console.log(arrOutput);
                 })
             });
-
             // projectPromise.forEach((data) => {
             //     console.log(data);
             //     get_thumb_list(data.web_url);

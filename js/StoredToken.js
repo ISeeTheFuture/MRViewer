@@ -1,5 +1,5 @@
-const Store = require('electron-store');
-const store = new Store();
+// const Store = require('electron-store');
+// const store = new Store();
 
 const createElement = require('./CreateElement');
 
@@ -15,7 +15,7 @@ class StoredToken {
     const buttonNo = createElement('button', 'No', 'button', div);
 
     buttonYes.addEventListener('click', () => {
-      store.set('token', this.token);
+      localStorage.setItem('token', this.token);
       div.remove();
     });
 
