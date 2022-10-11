@@ -1,6 +1,3 @@
-// const Store = require('electron-store');
-// const store = new Store();
-
 const createElement = require('./CreateElement');
 
 class StoredToken {

@@ -6,7 +6,7 @@ const MergeRequestList = require('./MergeRequestList')
 
 const mergeRequestList = new MergeRequestList();
 const GROUP_ID = 88
-const MEMBERS = ["lauree", "Seoung91", "sungali", "edlee"]
+// const MEMBERS = ["lauree", "Seoung91", "edlee", "extramilejin"]
 const AWARD_REGEX = /award-control btn has-tooltip js-emoji-btn user-authored js-user-authored" data-placement="bottom" data-title="([^"]+)"/g // 정규식 : https://curryyou.tistory.com/234
 
 // mr_content = {
@@ -19,11 +19,41 @@ class MergeRequests {
     constructor(token) {
         this.token = token;
         this.checkAuth();
+        this.refreshCycle = setInterval(this.refresh, 5000); // 테스트로 5초로 설정. 1분으로 변경할 것
     }
 
     axiosConfig(url) {
         return axios.get(url, {
             headers : {'Private-Token' : this.token}
+        });
+    }
+
+    isLatestRecord() { // 5분 내 라면 latest
+        const MRListTimeStr = localStorage.getItem('MRListTime');
+        if(!MRListTimeStr) {
+            return false;
+        }
+        const MRListTime = JSON.parse(MRListTimeStr);
+
+        const latestRef = 10000 // 테스트로 일단 10초로 설정해 확인
+        if(Date.now() - latestRef > MRListTime) {
+            return false;
+        }
+        return true;
+    }
+
+    refresh() {
+        console.log('no refresh');
+        if(this.isLatestRecord()) {
+            console.log('no refresh');
+            return;
+        }
+        console.log('refresh');
+        this.axiosConfig('https://gitlab.synap.co.kr/api/v4/users?active=true&per_page=200').then(() => {
+            this.getData();
+        })
+        .catch(e => {
+            console.log(e);
         })
     }
 
@@ -42,8 +72,8 @@ class MergeRequests {
 
     getData() {
         const mrPromise = [];
-        var mrPromiseLen = -1;
-        var cnt = 0;
+        // var mrPromiseLen = -1;
+        // var cnt = 0;
 
         // this.axiosConfig('https://gitlab.synap.co.kr/api/v4/merge_requests?scope=all&state=opened&per_page=200')
         this.axiosConfig(`https://gitlab.synap.co.kr/api/v4/groups/${GROUP_ID}/projects`) // https://elvanov.com/2597
@@ -63,14 +93,14 @@ class MergeRequests {
                             //     console.log(upvotes)
                             // }
                             // console.log(this.get_thumb_reviewer(upvotes))
-                            cnt++; // 필요없으면 지울 것
+                            // cnt++;
                         }
                     })
                     mergeRequestList.createList(mrPromise);
                     LoadingBar.hide();
-                    localStorage.setItem('MRList', JSON.stringify(mrPromise)); // localStorage에 배열을 그냥 넣을 수는 없고, json 형식으로 변환해야함
+                    localStorage.setItem('MRList', JSON.stringify(mrPromise)); // localStorage에 배열을 그냥 넣을 수는 없고, json 형식으로 변환해야 함
                     localStorage.setItem('MRListTime', JSON.stringify(new Date())); // https://hianna.tistory.com/698
-                    // var output = localStorage.getItem('MRList');
+                    // var output = localStorage.getItem('MRList'); // 동작 테스트
                     // var arrOutput = JSON.parse(output);
                     // console.log(arrOutput);
                 })
@@ -83,7 +113,7 @@ class MergeRequests {
         .catch(e => {
             console.log(e);
             LoadingBar.hide();
-            alert('error!')
+            alert('error!');
             document.getElementById('login-form').style.display = 'block';
         });
     }
@@ -93,9 +123,9 @@ class MergeRequests {
         console.log(now);
         setTimeout(500);
         if(before != now) {
-            return false
+            return false;
         }
-        return true
+        return true;
     }
 
 
